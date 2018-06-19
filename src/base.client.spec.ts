@@ -84,7 +84,7 @@ describe('BaseClient', () => {
 
     describe('getMocks', () => {
         beforeEach(() => {
-            invokeFn.resolves({ json: invokeResponseJsonFn })
+            invokeFn.resolves({ json: invokeResponseJsonFn });
         });
 
         it('gets the mocks', async () => {
@@ -101,7 +101,7 @@ describe('BaseClient', () => {
 
     describe('getVariables', () => {
         beforeEach(() => {
-            invokeFn.resolves({ json: invokeResponseJsonFn })
+            invokeFn.resolves({ json: invokeResponseJsonFn });
         });
 
         it('gets the variables', async () => {
@@ -212,7 +212,7 @@ describe('BaseClient', () => {
         beforeEach(() => {
             openUrlFn.resolves();
             setCookieFn.resolves();
-            promise = client.setNgApimockCookie()
+            promise = client.setNgApimockCookie();
         });
 
         it('opens the init url', async () => {
