@@ -9,7 +9,7 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "precompile": "rm -rf dist",
+    "precompile": "rimraf dist",
     "compile": "tsc",
     "lint": "tslint -p tsconfig.json",
     "test": "jasmine-ts \"src/**/*.spec.ts\""
@@ -36,11 +36,12 @@
   "devDependencies": {
     "@types/jasmine": "2.8.8",
     "@types/node-fetch": "2.1.1",
-    "@types/sinon": "4.3.0",
+    "@types/sinon": "5.0.1",
     "@types/url-join": "0.8.2",
     "@types/uuid": "3.4.3",
     "jasmine-ts": "0.2.1",
-    "sinon": "4.4.6",
+    "rimraf": "2.6.2",
+    "sinon": "6.0.0",
     "tslint": "5.10.0",
     "tslint-eslint-rules": "5.3.1",
     "typescript": "2.9.2",
