@@ -1,13 +1,14 @@
 {
   "name": "@ng-apimock/base-client",
   "description": "Base client for ng-apimock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/ng-apimock/base-client#readme",
   "author": {
     "name": "Mischa Dasberg",
     "email": "mischa@dasberg.nl"
   },
-  "main": "dist/index.js",
+  "main": "dist/base.client.js",
+  "types": "dist/base.client.d.ts",
   "scripts": {
     "precompile": "rimraf dist",
     "compile": "tsc",
