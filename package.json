@@ -1,6 +1,6 @@
 {
   "name": "@ng-apimock/base-client",
-  "description": "Base client for ng-apimock",
+  "description": "Base client for @ng-apimock/core",
   "version": "1.0.1",
   "homepage": "https://github.com/ng-apimock/base-client#readme",
   "author": {
