@@ -1,5 +1,4 @@
 import fetch, {Request} from 'node-fetch';
-import * as path from 'path';
 import * as uuid from 'uuid';
 import * as urljoin from 'url-join';
 
@@ -153,13 +152,12 @@ abstract class BaseClient {
 
     /**
      * Sets the variables.
-     * @param {Object} body The body.
+     * @param {Object} variables The variables.
      * @return {Promise} promise The promise.
      */
-    async setVariables(body: { [key: string]: string }): Promise<any> {
-        return await this.invoke('variables', 'PUT', body);
+    async setVariables(variables: { [key: string]: string }): Promise<any> {
+        return await this.invoke('variables', 'PUT', variables);
     }
-
 
 
     /**
