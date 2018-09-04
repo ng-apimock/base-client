@@ -26,13 +26,13 @@ describe('BaseClient', () => {
     let uuidV4Fn: sinon.SinonStub;
 
     beforeAll(() => {
-        invokeFn = sinon.stub(BaseClient.prototype, <any>'invoke');
+        invokeFn = sinon.stub(BaseClient.prototype, 'invoke');
         invokeResponseJsonFn = sinon.stub();
-        setVariablesFn = sinon.stub(BaseClient.prototype, <any>'setVariables');
-        fetchResponseFn = sinon.stub(BaseClient.prototype, <any>'fetchResponse');
-        openUrlFn = sinon.stub(TestClient.prototype, <any>'openUrl');
-        setCookieFn = sinon.stub(TestClient.prototype, <any>'setCookie');
-        uuidV4Fn = sinon.stub(uuid, <any>'v4').returns('123');
+        setVariablesFn = sinon.stub(BaseClient.prototype, 'setVariables');
+        fetchResponseFn = sinon.stub(BaseClient.prototype, 'fetchResponse');
+        openUrlFn = sinon.stub(TestClient.prototype, 'openUrl');
+        setCookieFn = sinon.stub(TestClient.prototype, 'setCookie');
+        uuidV4Fn = sinon.stub(uuid, 'v4').returns('123');
 
         client = new TestClient(BASE_URL);
     });
