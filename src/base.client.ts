@@ -19,21 +19,6 @@ abstract class BaseClient {
     }
 
     /**
-     * Opens the given url.
-     * @param {string} url The url.
-     * @return {Promise} promise The promise.
-     */
-    abstract async openUrl(url: string): Promise<any>;
-
-    /**
-     * Sets the cookie.
-     * @param {string} name The cookie name.
-     * @param {string} value The cookie value.
-     * @return {Promise} promise The promise.
-     */
-    abstract async setCookie(name: string, value: string): Promise<any>;
-
-    /**
      * Delay the mock response.
      * @param {string} name The mock name.
      * @param {number} delay The delay.
@@ -62,12 +47,31 @@ abstract class BaseClient {
         return await this.invoke('mocks', 'PUT', { name: name, echo: echo });
     }
 
+
+    /**
+     * Fetch the request.
+     * @param {Request} request The request.
+     * @return {Promise<any>} promise The promise.
+     */
+    async fetchResponse(request: Request): Promise<any> {
+        return await fetch(request);
+    }
+
     /**
      * Gets the mocks.
      * @return {Promise} promise The promise.
      */
     async getMocks(): Promise<any> {
         const response = await this.invoke('mocks', 'GET', {});
+        return await response.json();
+    }
+
+    /**
+     * Gets the recordings.
+     * @return {Promise} promise The promise.
+     */
+    async getRecordings(): Promise<any> {
+        const response = await this.invoke('recordings', 'GET', {});
         return await response.json();
     }
 
@@ -103,6 +107,22 @@ abstract class BaseClient {
     }
 
     /**
+     * Opens the given url.
+     * @param {string} url The url.
+     * @return {Promise} promise The promise.
+     */
+    abstract async openUrl(url: string): Promise<any>;
+
+    /**
+     * Record the requests.
+     * @param {boolean} record Indicator record.
+     * @return {Promise} promise The promise.
+     */
+    async recordRequests(record: boolean): Promise<any> {
+        return await this.invoke('actions', 'PUT', { action: 'record', record: record });
+    }
+
+    /**
      * Sets for all the mocks the selected scenario back to the default.
      * @return {Promise} promise The promise.
      */
@@ -119,6 +139,14 @@ abstract class BaseClient {
     async selectScenario(name: string, scenario: string): Promise<any> {
         return await this.invoke('mocks', 'PUT', { name: name, scenario: scenario });
     }
+
+    /**
+     * Sets the cookie.
+     * @param {string} name The cookie name.
+     * @param {string} value The cookie value.
+     * @return {Promise} promise The promise.
+     */
+    abstract async setCookie(name: string, value: string): Promise<any>;
 
     /**
      * Sets for all the mocks the selected scenario to the passThrough.
@@ -157,16 +185,6 @@ abstract class BaseClient {
      */
     async setVariables(variables: { [key: string]: string }): Promise<any> {
         return await this.invoke('variables', 'PUT', variables);
-    }
-
-
-    /**
-     * Fetch the request.
-     * @param {Request} request The request.
-     * @return {Promise<any>} promise The promise.
-     */
-    async fetchResponse(request: Request): Promise<any> {
-        return await fetch(request);
     }
 }
 

@@ -99,6 +99,23 @@ describe('BaseClient', () => {
         });
     });
 
+    describe('getRecordings', () => {
+        beforeEach(() => {
+            invokeFn.resolves({ json: invokeResponseJsonFn });
+        });
+
+        it('gets the recordings', async () => {
+            await client.getRecordings();
+            sinon.assert.calledWith(invokeFn, 'recordings', 'GET', {});
+            sinon.assert.called(invokeResponseJsonFn);
+        });
+
+        afterEach(() => {
+            invokeFn.reset();
+            invokeResponseJsonFn.reset();
+        });
+    });
+
     describe('getVariables', () => {
         beforeEach(() => {
             invokeFn.resolves({ json: invokeResponseJsonFn });
@@ -179,6 +196,17 @@ describe('BaseClient', () => {
 
         afterEach(() => {
             fetchResponseFn.reset();
+        });
+    });
+
+    describe('recordRequests', () => {
+        it('enables the recording the requests', () => {
+            client.recordRequests(true);
+            sinon.assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'record', record: true });
+        });
+
+        afterEach(() => {
+            invokeFn.reset();
         });
     });
 
