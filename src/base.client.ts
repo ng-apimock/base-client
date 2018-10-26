@@ -1,11 +1,12 @@
 import fetch, {Request} from 'node-fetch';
 import * as uuid from 'uuid';
 import * as urljoin from 'url-join';
+import {Client} from './client';
 
 const COOKIE_NAME = 'apimockid';
 
 /** Base client that takes care of the actual invoking of the ng-apimock api.*/
-abstract class BaseClient {
+abstract class BaseClient implements Client{
     public ngApimockId: string;
     public baseUrl: string;
 
