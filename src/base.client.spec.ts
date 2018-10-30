@@ -97,7 +97,7 @@ describe('BaseClient', () => {
             invokeFn.reset();
             invokeResponseJsonFn.reset();
         });
-    })
+    });
 
     describe('getPresets', () => {
         beforeEach(() => {
