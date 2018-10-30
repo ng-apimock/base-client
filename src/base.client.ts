@@ -1,12 +1,11 @@
 import fetch, {Request} from 'node-fetch';
 import * as uuid from 'uuid';
 import * as urljoin from 'url-join';
-import {Client} from './client';
 
 const COOKIE_NAME = 'apimockid';
 
 /** Base client that takes care of the actual invoking of the ng-apimock api.*/
-abstract class BaseClient implements Client{
+abstract class BaseClient {
     public ngApimockId: string;
     public baseUrl: string;
 
@@ -64,6 +63,15 @@ abstract class BaseClient implements Client{
      */
     async getMocks(): Promise<any> {
         const response = await this.invoke('mocks', 'GET', {});
+        return await response.json();
+    }
+
+    /**
+     * Gets the presets.
+     * @return {Promise} promise The promise.
+     */
+    async getPresets(): Promise<any> {
+        const response = await this.invoke('presets', 'GET', {});
         return await response.json();
     }
 
@@ -129,6 +137,15 @@ abstract class BaseClient implements Client{
      */
     async resetMocksToDefault(): Promise<any> {
         await this.invoke('actions', 'PUT', { action: 'defaults' });
+    }
+
+    /**
+     * Selects the preset matching the given preset name.
+     * @param {string} name The mock name.
+     * @return {Promise} promise The promise.
+     */
+    async selectPreset(name: string): Promise<any> {
+        return await this.invoke('presets', 'PUT', { name: name });
     }
 
     /**

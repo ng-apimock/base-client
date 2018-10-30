@@ -97,6 +97,23 @@ describe('BaseClient', () => {
             invokeFn.reset();
             invokeResponseJsonFn.reset();
         });
+    })
+
+    describe('getPresets', () => {
+        beforeEach(() => {
+            invokeFn.resolves({ json: invokeResponseJsonFn });
+        });
+
+        it('gets the presets', async () => {
+            await client.getPresets();
+            sinon.assert.calledWith(invokeFn, 'presets', 'GET', {});
+            sinon.assert.called(invokeResponseJsonFn);
+        });
+
+        afterEach(() => {
+            invokeFn.reset();
+            invokeResponseJsonFn.reset();
+        });
     });
 
     describe('getRecordings', () => {
@@ -214,6 +231,18 @@ describe('BaseClient', () => {
         it('resets the mocks to defaults', () => {
             client.resetMocksToDefault();
             sinon.assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'defaults' });
+        });
+
+        afterEach(() => {
+            invokeFn.reset();
+        });
+    });
+
+    describe('selectPreset', () => {
+        it('selects the preset', () => {
+            const name = 'preset name';
+            client.selectPreset(name);
+            sinon.assert.calledWith(invokeFn, 'presets', 'PUT', { name: name });
         });
 
         afterEach(() => {
