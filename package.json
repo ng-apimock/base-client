@@ -1,7 +1,7 @@
 {
   "name": "@ng-apimock/base-client",
   "description": "Base client for @ng-apimock/core",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "homepage": "https://github.com/ng-apimock/base-client#readme",
   "author": {
     "name": "Mischa Dasberg",
@@ -35,7 +35,7 @@
     "api"
   ],
   "devDependencies": {
-    "@types/jasmine": "2.8.9",
+    "@types/jasmine": "2.8.11",
     "@types/node-fetch": "2.1.2",
     "@types/sinon": "5.0.5",
     "@types/url-join": "0.8.2",
@@ -47,11 +47,11 @@
     "ts-node": "7.0.1",
     "tslint": "5.11.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "3.1.5",
+    "typescript": "3.1.6",
     "vrsource-tslint-rules": "5.8.2"
   },
   "dependencies": {
-    "node-fetch": "2.2.0",
+    "node-fetch": "2.2.1",
     "url-join": "4.0.0",
     "uuid": "3.3.2"
   }
