@@ -2,44 +2,44 @@ workflows:
   version: 2
   build:
     jobs:
-      - node-v6
-      - node-v8
-      - node-v9
-      - node-v10
+    - node-v6
+    - node-v8
+    - node-v9
+    - node-v10
 
 version: 2
 jobs:
   node-base: &node-base
     docker:
-      - image: node
+    - image: node
     steps:
-      - run:
-          name: Versions
-          command: npm version
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Lint
-          command: npm run lint
-      - run:
-          name: Test
-          command: npm test
+    - run:
+        name: Versions
+        command: npm version
+    - checkout
+    - run:
+        name: Install dependencies
+        command: npm install
+    - run:
+        name: Lint
+        command: npm run lint
+    - run:
+        name: Test
+        command: npm test
 
   node-v6:
     <<: *node-base
     docker:
-      - image: node:6
+    - image: node:6
   node-v8:
     <<: *node-base
     docker:
-      - image: node:8
+    - image: node:8
   node-v9:
     <<: *node-base
     docker:
-      - image: node:9
+    - image: node:9
   node-v10:
     <<: *node-base
     docker:
-      - image: node:10
+    - image: node:10

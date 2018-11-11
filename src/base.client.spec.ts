@@ -1,7 +1,6 @@
-import * as sinon from 'sinon';
 import * as uuid from 'uuid';
-
-import BaseClient from './base.client';
+import {assert, match, SinonStub, stub} from 'sinon';
+import {BaseClient} from './base.client';
 
 class TestClient extends BaseClient {
     openUrl(url: string): Promise<any> {
@@ -14,27 +13,25 @@ class TestClient extends BaseClient {
 }
 
 describe('BaseClient', () => {
-    const BASE_URL = 'http://localhost:9000';
-
     let client: BaseClient;
-    let fetchResponseFn: sinon.SinonStub;
-    let invokeFn: sinon.SinonStub;
-    let invokeResponseJsonFn: sinon.SinonStub;
-    let openUrlFn: sinon.SinonStub;
-    let setCookieFn: sinon.SinonStub;
-    let setVariablesFn: sinon.SinonStub;
-    let uuidV4Fn: sinon.SinonStub;
+    let fetchResponseFn: SinonStub;
+    let invokeFn: SinonStub;
+    let invokeResponseJsonFn: SinonStub;
+    let openUrlFn: SinonStub;
+    let setCookieFn: SinonStub;
+    let setVariablesFn: SinonStub;
+    let uuidV4Fn: SinonStub;
 
-    beforeAll(() => {
-        invokeFn = sinon.stub(BaseClient.prototype, 'invoke');
-        invokeResponseJsonFn = sinon.stub();
-        setVariablesFn = sinon.stub(BaseClient.prototype, 'setVariables');
-        fetchResponseFn = sinon.stub(BaseClient.prototype, 'fetchResponse');
-        openUrlFn = sinon.stub(TestClient.prototype, 'openUrl');
-        setCookieFn = sinon.stub(TestClient.prototype, 'setCookie');
-        uuidV4Fn = sinon.stub(uuid, 'v4').returns('123');
+    beforeEach(() => {
+        invokeFn = stub(BaseClient.prototype, 'invoke');
+        invokeResponseJsonFn = stub();
+        setVariablesFn = stub(BaseClient.prototype, 'setVariables');
+        fetchResponseFn = stub(BaseClient.prototype, 'fetchResponse');
+        openUrlFn = stub(TestClient.prototype, 'openUrl');
+        setCookieFn = stub(TestClient.prototype, 'setCookie');
+        uuidV4Fn = stub(uuid, 'v4').returns('123');
 
-        client = new TestClient(BASE_URL);
+        client = new TestClient('http://localhost:9000');
     });
 
     describe('constructor', () => {
@@ -42,7 +39,7 @@ describe('BaseClient', () => {
             expect(client.ngApimockId).toBeDefined());
 
         it('sets the baseUrl', () =>
-            expect(client.baseUrl).toBe(BASE_URL + '/ngapimock'));
+            expect(client.baseUrl).toBe('http://localhost:9000' + '/ngapimock'));
     });
 
     describe('delayResponse', () => {
@@ -50,7 +47,7 @@ describe('BaseClient', () => {
             const name = 'name';
             const delay = 1000;
             client.delayResponse(name, delay);
-            sinon.assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, delay: delay });
+            assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, delay: delay });
         });
 
         afterEach(() => {
@@ -61,7 +58,7 @@ describe('BaseClient', () => {
     describe('deleteVariable', () => {
         it('deletes the variable', () => {
             client.deleteVariable('one');
-            sinon.assert.calledWith(invokeFn, 'variables/one', 'DELETE', {});
+            assert.calledWith(invokeFn, 'variables/one', 'DELETE', {});
         });
 
         afterEach(() => {
@@ -74,7 +71,7 @@ describe('BaseClient', () => {
             const name = 'name';
             const echo = true;
             client.echoRequest(name, echo);
-            sinon.assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, echo: echo });
+            assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, echo: echo });
         });
 
         afterEach(() => {
@@ -89,8 +86,8 @@ describe('BaseClient', () => {
 
         it('gets the mocks', async () => {
             await client.getMocks();
-            sinon.assert.calledWith(invokeFn, 'mocks', 'GET', {});
-            sinon.assert.called(invokeResponseJsonFn);
+            assert.calledWith(invokeFn, 'mocks', 'GET', {});
+            assert.called(invokeResponseJsonFn);
         });
 
         afterEach(() => {
@@ -106,8 +103,8 @@ describe('BaseClient', () => {
 
         it('gets the presets', async () => {
             await client.getPresets();
-            sinon.assert.calledWith(invokeFn, 'presets', 'GET', {});
-            sinon.assert.called(invokeResponseJsonFn);
+            assert.calledWith(invokeFn, 'presets', 'GET', {});
+            assert.called(invokeResponseJsonFn);
         });
 
         afterEach(() => {
@@ -123,8 +120,8 @@ describe('BaseClient', () => {
 
         it('gets the recordings', async () => {
             await client.getRecordings();
-            sinon.assert.calledWith(invokeFn, 'recordings', 'GET', {});
-            sinon.assert.called(invokeResponseJsonFn);
+            assert.calledWith(invokeFn, 'recordings', 'GET', {});
+            assert.called(invokeResponseJsonFn);
         });
 
         afterEach(() => {
@@ -140,8 +137,8 @@ describe('BaseClient', () => {
 
         it('gets the variables', async () => {
             await client.getVariables();
-            sinon.assert.calledWith(invokeFn, 'variables', 'GET', {});
-            sinon.assert.called(invokeResponseJsonFn);
+            assert.calledWith(invokeFn, 'variables', 'GET', {});
+            assert.called(invokeResponseJsonFn);
         });
 
         afterEach(() => {
@@ -157,13 +154,13 @@ describe('BaseClient', () => {
 
         describe('method is GET', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'GET', {some:'body'});
+                client.invoke('some/query', 'GET', { some: 'body' });
 
-                sinon.assert.calledWith(fetchResponseFn, sinon.match(async (actual: Request) => {
+                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('GET');
-                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
-                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
-                     expect(actual.headers.get('Content-Type')).toBe('application/json');
+                    expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
+                    expect(actual.headers.get('Cookie')).toBe('apimockid=123');
+                    expect(actual.headers.get('Content-Type')).toBe('application/json');
                     return expect(await actual.text()).toBe('');
                 }));
             });
@@ -171,9 +168,9 @@ describe('BaseClient', () => {
 
         describe('method is DELETE', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'DELETE', {some:'body'});
+                client.invoke('some/query', 'DELETE', { some: 'body' });
 
-                sinon.assert.calledWith(fetchResponseFn, sinon.match(async (actual: Request) => {
+                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('DELETE');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
@@ -185,9 +182,9 @@ describe('BaseClient', () => {
 
         describe('method is POST', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'POST', {some:'body'});
+                client.invoke('some/query', 'POST', { some: 'body' });
 
-                sinon.assert.calledWith(fetchResponseFn, sinon.match(async (actual: Request) => {
+                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('POST');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
@@ -199,9 +196,9 @@ describe('BaseClient', () => {
 
         describe('method is PUT', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'PUT', {some:'body'});
+                client.invoke('some/query', 'PUT', { some: 'body' });
 
-                sinon.assert.calledWith(fetchResponseFn, sinon.match(async (actual: Request) => {
+                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('PUT');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
@@ -219,7 +216,7 @@ describe('BaseClient', () => {
     describe('recordRequests', () => {
         it('enables the recording the requests', () => {
             client.recordRequests(true);
-            sinon.assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'record', record: true });
+            assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'record', record: true });
         });
 
         afterEach(() => {
@@ -230,7 +227,7 @@ describe('BaseClient', () => {
     describe('resetMocksToDefault', () => {
         it('resets the mocks to defaults', () => {
             client.resetMocksToDefault();
-            sinon.assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'defaults' });
+            assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'defaults' });
         });
 
         afterEach(() => {
@@ -242,7 +239,7 @@ describe('BaseClient', () => {
         it('selects the preset', () => {
             const name = 'preset name';
             client.selectPreset(name);
-            sinon.assert.calledWith(invokeFn, 'presets', 'PUT', { name: name });
+            assert.calledWith(invokeFn, 'presets', 'PUT', { name: name });
         });
 
         afterEach(() => {
@@ -255,7 +252,7 @@ describe('BaseClient', () => {
             const name = 'name';
             const scenario = 'scenario';
             client.selectScenario(name, scenario);
-            sinon.assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, scenario: scenario });
+            assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, scenario: scenario });
         });
 
         afterEach(() => {
@@ -274,12 +271,12 @@ describe('BaseClient', () => {
 
         it('opens the init url', async () => {
             await promise;
-            sinon.assert.calledWith(openUrlFn, `${BASE_URL}/ngapimock/init`);
+            assert.calledWith(openUrlFn, `${'http://localhost:9000'}/ngapimock/init`);
         });
 
         it('sets the cookie', async () => {
             await promise;
-            sinon.assert.calledWith(setCookieFn, 'apimockid', client.ngApimockId);
+            assert.calledWith(setCookieFn, 'apimockid', client.ngApimockId);
         });
 
         afterEach(() => {
@@ -291,7 +288,7 @@ describe('BaseClient', () => {
     describe('setMocksToPassThrough', () => {
         it('sets mocks to passThrough', () => {
             client.setMocksToPassThrough();
-            sinon.assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'passThroughs' });
+            assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'passThroughs' });
         });
 
         afterEach(() => {
@@ -302,7 +299,7 @@ describe('BaseClient', () => {
     describe('setVariable', () => {
         it('sets the variable', () => {
             client.setVariable('one', 'first');
-            sinon.assert.calledWith(setVariablesFn, { one: 'first' });
+            assert.calledWith(setVariablesFn, { one: 'first' });
         });
 
         afterEach(() => {
@@ -319,7 +316,7 @@ describe('BaseClient', () => {
 
         it('sets the variables', () => {
             client.setVariables(variables);
-            sinon.assert.calledWith(invokeFn, 'variables', 'PUT', variables);
+            assert.calledWith(invokeFn, 'variables', 'PUT', variables);
         });
 
         afterEach(() => {
@@ -328,7 +325,7 @@ describe('BaseClient', () => {
         });
     });
 
-    afterAll(() => {
+    afterEach(() => {
         invokeFn.restore();
         setVariablesFn.restore();
         fetchResponseFn.restore();
