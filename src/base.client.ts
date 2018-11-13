@@ -14,7 +14,7 @@ abstract class BaseClient implements Client {
      * Constructor.
      * @param {string} baseUrl The base url.
      */
-    constructor(baseUrl: string) {
+    protected constructor(baseUrl: string) {
         this.ngApimockId = uuid.v4();
         this.baseUrl = urljoin(baseUrl, 'ngapimock');
     }
