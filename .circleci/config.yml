@@ -2,10 +2,13 @@ workflows:
   version: 2
   build:
     jobs:
-    - node-v6
     - node-v8
-    - node-v9
-    - node-v10
+    - node-v9:
+        requires:
+        - node-v8
+    - node-v10:
+        requires:
+        - node-v9
 
 version: 2
 jobs:
@@ -27,10 +30,6 @@ jobs:
         name: Test
         command: npm test
 
-  node-v6:
-    <<: *node-base
-    docker:
-    - image: node:6
   node-v8:
     <<: *node-base
     docker:
