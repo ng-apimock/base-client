@@ -29,7 +29,7 @@ describe('BaseClient', () => {
         fetchResponseFn = stub(BaseClient.prototype, 'fetchResponse');
         openUrlFn = stub(TestClient.prototype, 'openUrl');
         setCookieFn = stub(TestClient.prototype, 'setCookie');
-        uuidV4Fn = stub(uuid, 'v4').returns('123');
+        uuidV4Fn = stub(uuid, 'v4').returns('123' as any);
 
         client = new TestClient('http://localhost:9000');
     });
