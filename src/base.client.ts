@@ -26,7 +26,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async delayResponse(name: string, delay: number): Promise<any> {
-        return await this.invoke('mocks', 'PUT', { name: name, delay: delay });
+        return await this.invoke('mocks', 'PUT', {name: name, delay: delay});
     }
 
     /**
@@ -45,9 +45,8 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async echoRequest(name: string, echo: boolean): Promise<any> {
-        return await this.invoke('mocks', 'PUT', { name: name, echo: echo });
+        return await this.invoke('mocks', 'PUT', {name: name, echo: echo});
     }
-
 
     /**
      * Fetch the request.
@@ -113,7 +112,15 @@ abstract class BaseClient implements Client {
             requestInit.body = JSON.stringify(body);
         }
 
-        return await this.fetchResponse(new Request(urljoin(this.baseUrl, query), requestInit));
+        const url = urljoin(this.baseUrl, query);
+        return await this.fetchResponse(new Request(url, requestInit))
+            .then((response: Response) => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    throw new Error(`An error occured while invoking ${url} that resulted in status code ${response.status}`);
+                }
+            });
     }
 
     /**
@@ -129,7 +136,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async recordRequests(record: boolean): Promise<any> {
-        return await this.invoke('actions', 'PUT', { action: 'record', record: record });
+        return await this.invoke('actions', 'PUT', {action: 'record', record: record});
     }
 
     /**
@@ -137,7 +144,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async resetMocksToDefault(): Promise<any> {
-        await this.invoke('actions', 'PUT', { action: 'defaults' });
+        await this.invoke('actions', 'PUT', {action: 'defaults'});
     }
 
     /**
@@ -146,7 +153,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async selectPreset(name: string): Promise<any> {
-        return await this.invoke('presets', 'PUT', { name: name });
+        return await this.invoke('presets', 'PUT', {name: name});
     }
 
     /**
@@ -156,7 +163,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async selectScenario(name: string, scenario: string): Promise<any> {
-        return await this.invoke('mocks', 'PUT', { name: name, scenario: scenario });
+        return await this.invoke('mocks', 'PUT', {name: name, scenario: scenario});
     }
 
     /**
@@ -172,7 +179,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async setMocksToPassThrough(): Promise<any> {
-        return await this.invoke('actions', 'PUT', { action: 'passThroughs' });
+        return await this.invoke('actions', 'PUT', {action: 'passThroughs'});
     }
 
     /**

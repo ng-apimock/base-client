@@ -14,25 +14,24 @@ class TestClient extends BaseClient {
 
 describe('BaseClient', () => {
     let client: BaseClient;
-    let fetchResponseFn: SinonStub;
-    let invokeFn: SinonStub;
-    let invokeResponseJsonFn: SinonStub;
     let openUrlFn: SinonStub;
     let setCookieFn: SinonStub;
-    let setVariablesFn: SinonStub;
+    let stubs: SinonStub[];
     let uuidV4Fn: SinonStub;
 
     beforeEach(() => {
-        invokeFn = stub(BaseClient.prototype, 'invoke');
-        invokeResponseJsonFn = stub();
-        setVariablesFn = stub(BaseClient.prototype, 'setVariables');
-        fetchResponseFn = stub(BaseClient.prototype, 'fetchResponse');
-        openUrlFn = stub(TestClient.prototype, 'openUrl');
-        setCookieFn = stub(TestClient.prototype, 'setCookie');
-        uuidV4Fn = stub(uuid, 'v4').returns('123' as any);
+        stubs = [
+            uuidV4Fn = stub(uuid, 'v4'),
+            openUrlFn = stub(TestClient.prototype, 'openUrl'),
+            setCookieFn = stub(TestClient.prototype, 'setCookie')
+        ];
+
+        uuidV4Fn.returns('123' as any);
 
         client = new TestClient('http://localhost:9000');
     });
+
+    afterEach(() => stubs.forEach((stub) => stub.restore()));
 
     describe('constructor', () => {
         it('sets the apimock id', () =>
@@ -43,118 +42,160 @@ describe('BaseClient', () => {
     });
 
     describe('delayResponse', () => {
-        it('delays the mock response', () => {
-            const name = 'name';
-            const delay = 1000;
-            client.delayResponse(name, delay);
-            assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, delay: delay });
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
+            client.delayResponse('name', 1000);
         });
 
-        afterEach(() => {
-            invokeFn.reset();
-        });
+        afterEach(() => invokeFn.restore());
+
+        it('delays the mock response', () =>
+            assert.calledWith(invokeFn, 'mocks', 'PUT', {name: 'name', delay: 1000}));
     });
 
     describe('deleteVariable', () => {
-        it('deletes the variable', () => {
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
             client.deleteVariable('one');
-            assert.calledWith(invokeFn, 'variables/one', 'DELETE', {});
         });
 
-        afterEach(() => {
-            invokeFn.reset();
-        });
+        afterEach(() => invokeFn.restore());
+
+        it('deletes the variable', () =>
+            assert.calledWith(invokeFn, 'variables/one', 'DELETE', {}));
     });
 
     describe('echoRequest', () => {
-        it('enables the mock request echo', () => {
-            const name = 'name';
-            const echo = true;
-            client.echoRequest(name, echo);
-            assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, echo: echo });
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
+            client.echoRequest('name', true);
         });
 
-        afterEach(() => {
-            invokeFn.reset();
-        });
+        afterEach(() => invokeFn.restore());
+
+        it('enables the mock request echo', () =>
+            assert.calledWith(invokeFn, 'mocks', 'PUT', {name: 'name', echo: true}));
     });
 
     describe('getMocks', () => {
-        beforeEach(() => {
-            invokeFn.resolves({ json: invokeResponseJsonFn });
+        let invokeFn: SinonStub;
+        let invokeResponseJsonFn: SinonStub;
+
+        beforeEach(async () => {
+            invokeResponseJsonFn = stub();
+            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn.resolves({json: invokeResponseJsonFn});
+
+            await client.getMocks();
         });
 
-        it('gets the mocks', async () => {
-            await client.getMocks();
+        afterEach(() => invokeFn.restore());
+
+        it('gets the mocks', () => {
             assert.calledWith(invokeFn, 'mocks', 'GET', {});
             assert.called(invokeResponseJsonFn);
-        });
-
-        afterEach(() => {
-            invokeFn.reset();
-            invokeResponseJsonFn.reset();
         });
     });
 
     describe('getPresets', () => {
-        beforeEach(() => {
-            invokeFn.resolves({ json: invokeResponseJsonFn });
+        let invokeFn: SinonStub;
+        let invokeResponseJsonFn: SinonStub;
+
+        beforeEach(async () => {
+            invokeResponseJsonFn = stub();
+            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn.resolves({json: invokeResponseJsonFn});
+
+            await client.getPresets();
         });
 
-        it('gets the presets', async () => {
-            await client.getPresets();
+        afterEach(() => invokeFn.restore());
+
+        it('gets the presets', () => {
             assert.calledWith(invokeFn, 'presets', 'GET', {});
             assert.called(invokeResponseJsonFn);
-        });
-
-        afterEach(() => {
-            invokeFn.reset();
-            invokeResponseJsonFn.reset();
         });
     });
 
     describe('getRecordings', () => {
-        beforeEach(() => {
-            invokeFn.resolves({ json: invokeResponseJsonFn });
+        let invokeFn: SinonStub;
+        let invokeResponseJsonFn: SinonStub;
+
+        beforeEach(async () => {
+            invokeResponseJsonFn = stub();
+            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn.resolves({json: invokeResponseJsonFn});
+
+            await client.getRecordings();
         });
 
-        it('gets the recordings', async () => {
-            await client.getRecordings();
+        afterEach(() => invokeFn.restore());
+
+        it('gets the recordings', () => {
             assert.calledWith(invokeFn, 'recordings', 'GET', {});
             assert.called(invokeResponseJsonFn);
-        });
-
-        afterEach(() => {
-            invokeFn.reset();
-            invokeResponseJsonFn.reset();
         });
     });
 
     describe('getVariables', () => {
-        beforeEach(() => {
-            invokeFn.resolves({ json: invokeResponseJsonFn });
+        let invokeFn: SinonStub;
+        let invokeResponseJsonFn: SinonStub;
+
+        beforeEach(async () => {
+            invokeResponseJsonFn = stub();
+            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn.resolves({json: invokeResponseJsonFn});
+
+            await client.getVariables();
         });
 
-        it('gets the variables', async () => {
-            await client.getVariables();
+        afterEach(() => invokeFn.restore());
+
+        it('gets the variables', () => {
             assert.calledWith(invokeFn, 'variables', 'GET', {});
             assert.called(invokeResponseJsonFn);
-        });
-
-        afterEach(() => {
-            invokeFn.reset();
-            invokeResponseJsonFn.reset();
         });
     });
 
     describe('invoke', () => {
+        let fetchResponseFn: SinonStub;
+
         beforeEach(() => {
-            invokeFn.callThrough();
+            fetchResponseFn = stub(BaseClient.prototype, 'fetchResponse');
+
+            fetchResponseFn.resolves(({ok: true, status: 200}))
         });
+
+        afterEach(() => fetchResponseFn.restore());
+
+        describe('throws an error when fetch returns non 200', () => {
+            beforeEach(() => {
+                fetchResponseFn.resolves(({ok: false, status: 404}))
+            });
+
+            it('calls the api without body', async () => {
+                try {
+                    await client.invoke('some/query', 'GET', {some: 'body'});
+                    fail();
+                } catch (error) {
+                    expect(error.message).toBe('An error occured while invoking http://localhost:9000/ngapimock/some/query that resulted in status code 404')
+                }
+            });
+        });
+
 
         describe('method is GET', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'GET', { some: 'body' });
+                client.invoke('some/query', 'GET', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('GET');
@@ -168,7 +209,7 @@ describe('BaseClient', () => {
 
         describe('method is DELETE', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'DELETE', { some: 'body' });
+                client.invoke('some/query', 'DELETE', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('DELETE');
@@ -182,7 +223,7 @@ describe('BaseClient', () => {
 
         describe('method is POST', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'POST', { some: 'body' });
+                client.invoke('some/query', 'POST', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('POST');
@@ -196,7 +237,7 @@ describe('BaseClient', () => {
 
         describe('method is PUT', () => {
             it('calls the api without body', () => {
-                client.invoke('some/query', 'PUT', { some: 'body' });
+                client.invoke('some/query', 'PUT', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
                     expect(actual.method).toBe('PUT');
@@ -207,130 +248,140 @@ describe('BaseClient', () => {
                 }));
             });
         });
-
-        afterEach(() => {
-            fetchResponseFn.reset();
-        });
     });
 
+
     describe('recordRequests', () => {
-        it('enables the recording the requests', () => {
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
             client.recordRequests(true);
-            assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'record', record: true });
         });
 
-        afterEach(() => {
-            invokeFn.reset();
-        });
+        afterEach(() => invokeFn.restore());
+
+        it('enables the recording the requests', () =>
+            assert.calledWith(invokeFn, 'actions', 'PUT', {action: 'record', record: true}));
     });
 
     describe('resetMocksToDefault', () => {
-        it('resets the mocks to defaults', () => {
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
             client.resetMocksToDefault();
-            assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'defaults' });
         });
 
-        afterEach(() => {
-            invokeFn.reset();
-        });
+        afterEach(() => invokeFn.restore());
+
+        it('resets the mocks to defaults', () =>
+            assert.calledWith(invokeFn, 'actions', 'PUT', {action: 'defaults'}));
     });
 
     describe('selectPreset', () => {
-        it('selects the preset', () => {
-            const name = 'preset name';
-            client.selectPreset(name);
-            assert.calledWith(invokeFn, 'presets', 'PUT', { name: name });
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
+            client.selectPreset('preset name');
         });
 
-        afterEach(() => {
-            invokeFn.reset();
-        });
+        afterEach(() => invokeFn.restore());
+
+        it('selects the preset', () =>
+            assert.calledWith(invokeFn, 'presets', 'PUT', {name: 'preset name'}));
     });
 
     describe('selectScenario', () => {
-        it('selects the mock scenario', () => {
-            const name = 'name';
-            const scenario = 'scenario';
-            client.selectScenario(name, scenario);
-            assert.calledWith(invokeFn, 'mocks', 'PUT', { name: name, scenario: scenario });
-        });
-
-        afterEach(() => {
-            invokeFn.reset();
-        });
-    });
-
-    describe('setApimockCookie', () => {
-        let promise: Promise<any>;
+        let invokeFn: SinonStub;
 
         beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
+            client.selectScenario('name', 'scenario');
+        });
+
+        afterEach(() => invokeFn.restore());
+
+        it('selects the mock scenario', () =>
+            assert.calledWith(invokeFn, 'mocks', 'PUT', {name: 'name', scenario: 'scenario'}));
+    });
+
+    describe('setMocksToPassThrough', () => {
+        let invokeFn: SinonStub;
+
+        beforeEach(() => {
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
+            client.setMocksToPassThrough();
+        });
+
+        afterEach(() => invokeFn.restore());
+
+        it('sets mocks to passThrough', () =>
+            assert.calledWith(invokeFn, 'actions', 'PUT', {action: 'passThroughs'}));
+    });
+
+    describe('setNgApimockCookie', () => {
+
+        beforeEach(async () => {
             openUrlFn.resolves();
             setCookieFn.resolves();
-            promise = client.setNgApimockCookie();
-        });
 
-        it('opens the init url', async () => {
-            await promise;
-            assert.calledWith(openUrlFn, `${'http://localhost:9000'}/ngapimock/init`);
-        });
-
-        it('sets the cookie', async () => {
-            await promise;
-            assert.calledWith(setCookieFn, 'apimockid', client.ngApimockId);
+            await client.setNgApimockCookie();
         });
 
         afterEach(() => {
             openUrlFn.reset();
             setCookieFn.reset();
         });
-    });
 
-    describe('setMocksToPassThrough', () => {
-        it('sets mocks to passThrough', () => {
-            client.setMocksToPassThrough();
-            assert.calledWith(invokeFn, 'actions', 'PUT', { action: 'passThroughs' });
+        it('opens the init url', () => {
+            assert.calledWith(openUrlFn, `${'http://localhost:9000'}/ngapimock/init`);
         });
 
-        afterEach(() => {
-            invokeFn.reset();
+        it('sets the cookie', () => {
+            assert.calledWith(setCookieFn, 'apimockid', client.ngApimockId);
         });
     });
+
 
     describe('setVariable', () => {
-        it('sets the variable', () => {
+        let setVariablesFn: SinonStub;
+
+        beforeEach(() => {
+            setVariablesFn = stub(BaseClient.prototype, 'setVariables');
+
             client.setVariable('one', 'first');
-            assert.calledWith(setVariablesFn, { one: 'first' });
         });
 
         afterEach(() => {
-            setVariablesFn.reset();
+            setVariablesFn.restore();
         });
+
+        it('sets the variable', () =>
+            assert.calledWith(setVariablesFn, {one: 'first'}));
     });
 
     describe('setVariables', () => {
         let variables: { [key: string]: string };
+        let invokeFn: SinonStub;
+
         beforeEach(() => {
-            setVariablesFn.callThrough();
-            variables = { 'one': 'first', 'two': 'second' };
+            invokeFn = stub(BaseClient.prototype, 'invoke');
+
+            client.setVariables({'one': 'first', 'two': 'second'});
         });
 
-        it('sets the variables', () => {
-            client.setVariables(variables);
-            assert.calledWith(invokeFn, 'variables', 'PUT', variables);
-        });
+        afterEach(() => invokeFn.restore());
 
-        afterEach(() => {
-            setVariablesFn.reset();
-            invokeFn.reset();
-        });
+        it('sets the variables', () =>
+            assert.calledWith(invokeFn, 'variables', 'PUT', {'one': 'first', 'two': 'second'}));
     });
 
-    afterEach(() => {
-        invokeFn.restore();
-        setVariablesFn.restore();
-        fetchResponseFn.restore();
-        openUrlFn.restore();
-        setCookieFn.restore();
-        uuidV4Fn.restore();
-    });
+
 });
