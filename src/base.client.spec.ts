@@ -92,7 +92,7 @@ describe('BaseClient', () => {
 
         beforeEach(async () => {
             invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn = stub(BaseClient.prototype, 'invoke');
             invokeFn.resolves({json: invokeResponseJsonFn});
 
             await client.getMocks();
@@ -112,7 +112,7 @@ describe('BaseClient', () => {
 
         beforeEach(async () => {
             invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn = stub(BaseClient.prototype, 'invoke');
             invokeFn.resolves({json: invokeResponseJsonFn});
 
             await client.getPresets();
@@ -132,7 +132,7 @@ describe('BaseClient', () => {
 
         beforeEach(async () => {
             invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn = stub(BaseClient.prototype, 'invoke');
             invokeFn.resolves({json: invokeResponseJsonFn});
 
             await client.getRecordings();
@@ -152,7 +152,7 @@ describe('BaseClient', () => {
 
         beforeEach(async () => {
             invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke')
+            invokeFn = stub(BaseClient.prototype, 'invoke');
             invokeFn.resolves({json: invokeResponseJsonFn});
 
             await client.getVariables();
@@ -172,14 +172,14 @@ describe('BaseClient', () => {
         beforeEach(() => {
             fetchResponseFn = stub(BaseClient.prototype, 'fetchResponse');
 
-            fetchResponseFn.resolves(({ok: true, status: 200}))
+            fetchResponseFn.resolves(({ok: true, status: 200}));
         });
 
         afterEach(() => fetchResponseFn.restore());
 
         describe('throws an error when fetch returns non 200', () => {
             beforeEach(() => {
-                fetchResponseFn.resolves(({ok: false, status: 404}))
+                fetchResponseFn.resolves(({ok: false, status: 404}));
             });
 
             it('calls the api without body', async () => {
@@ -187,7 +187,7 @@ describe('BaseClient', () => {
                     await client.invoke('some/query', 'GET', {some: 'body'});
                     fail();
                 } catch (error) {
-                    expect(error.message).toBe('An error occured while invoking http://localhost:9000/ngapimock/some/query that resulted in status code 404')
+                    expect(error.message).toBe('An error occured while invoking http://localhost:9000/ngapimock/some/query that resulted in status code 404');
                 }
             });
         });
@@ -382,6 +382,4 @@ describe('BaseClient', () => {
         it('sets the variables', () =>
             assert.calledWith(invokeFn, 'variables', 'PUT', {'one': 'first', 'two': 'second'}));
     });
-
-
 });
