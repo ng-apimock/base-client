@@ -11,6 +11,7 @@ jasmine.json
 
 # idea
 .idea
+*.iml
 
 # ci
 .circleci
