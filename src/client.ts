@@ -83,15 +83,15 @@ export interface Client {
     /**
      * Sets the variable.
      * @param {string} key The key.
-     * @param {string} value The value.
+     * @param {any} value The value.
      * @return {promise} promise The promise.
      */
-    setVariable(key: string, value: string): Promise<any>;
+    setVariable(key: string, value: any): Promise<any>;
 
     /**
      * Sets the variables.
-     * @param {{ [key: string]: string; }} variables The variables.
+     * @param {{ [key: string]: any }} variables The variables.
      * @return {promise} promise The promise.
      */
-    setVariables(variables: { [key: string]: string; }): Promise<any>;
+    setVariables(variables: { [key: string]: any }): Promise<any>;
 }

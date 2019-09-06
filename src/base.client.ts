@@ -195,11 +195,11 @@ abstract class BaseClient implements Client {
     /**
      * Sets the variable.
      * @param {string} key The key.
-     * @param {string} value The value.
+     * @param {any} value The value.
      * @return {Promise} promise The promise.
      */
-    async setVariable(key: string, value: string): Promise<any> {
-        const body: { [key: string]: string } = {};
+    async setVariable(key: string, value: any): Promise<any> {
+        const body: { [key: string]: any } = {};
         body[key] = value;
         return await this.setVariables(body);
     }
@@ -209,7 +209,7 @@ abstract class BaseClient implements Client {
      * @param {Object} variables The variables.
      * @return {Promise} promise The promise.
      */
-    async setVariables(variables: { [key: string]: string }): Promise<any> {
+    async setVariables(variables: { [key: string]: any }): Promise<any> {
         return await this.invoke('variables', 'PUT', variables);
     }
 }
