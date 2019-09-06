@@ -374,12 +374,12 @@ describe('BaseClient', () => {
         beforeEach(() => {
             invokeFn = stub(BaseClient.prototype, 'invoke');
 
-            client.setVariables({'one': 'first', 'two': 'second'});
+            client.setVariables({'one': 'first', 'enabled': true});
         });
 
         afterEach(() => invokeFn.restore());
 
         it('sets the variables', () =>
-            assert.calledWith(invokeFn, 'variables', 'PUT', {'one': 'first', 'two': 'second'}));
+            assert.calledWith(invokeFn, 'variables', 'PUT', {'one': 'first', 'enabled': true}));
     });
 });
