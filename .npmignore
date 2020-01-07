@@ -3,11 +3,11 @@ src
 
 # test
 **/*.spec.*
+jest.config.js
 
 # configs
 tsconfig.json
 tslint.json
-jasmine.json
 
 # idea
 .idea
