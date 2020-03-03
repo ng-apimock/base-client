@@ -1,14 +1,17 @@
 import fetch, {Request} from 'node-fetch';
 import * as uuid from 'uuid';
 import {Client} from './client';
+import * as https from 'https';
 import urljoin = require('url-join');
 
 const COOKIE_NAME = 'apimockid';
+
 
 /** Base client that takes care of the actual invoking of the ng-apimock api.*/
 abstract class BaseClient implements Client {
     public ngApimockId: string;
     public baseUrl: string;
+    private agent: https.Agent;
 
     /**
      * Constructor.
@@ -17,6 +20,10 @@ abstract class BaseClient implements Client {
     constructor(baseUrl: string) {
         this.ngApimockId = uuid.v4();
         this.baseUrl = urljoin(baseUrl, 'ngapimock');
+
+        this.agent = new https.Agent({
+            rejectUnauthorized: false
+        });
     }
 
     /**
@@ -110,6 +117,10 @@ abstract class BaseClient implements Client {
 
         if (['GET', 'DELETE'].indexOf(method) === -1) {
             requestInit.body = JSON.stringify(body);
+        }
+
+        if (this.baseUrl.startsWith('https')) {
+            requestInit.agent = this.agent;
         }
 
         const url = urljoin(this.baseUrl, query);
