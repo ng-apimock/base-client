@@ -39,6 +39,9 @@ describe('BaseClient', () => {
 
         it('sets the baseUrl', () =>
             expect(client.baseUrl).toBe('http://localhost:9000' + '/ngapimock'));
+
+        it('sets the https agent', () =>
+            expect((client as any).agent).toBeDefined());
     });
 
     describe('delayResponse', () => {
@@ -198,6 +201,7 @@ describe('BaseClient', () => {
                 client.invoke('some/query', 'GET', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
+                    expect((actual as any).agent).toBeUndefined();
                     expect(actual.method).toBe('GET');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
@@ -212,6 +216,7 @@ describe('BaseClient', () => {
                 client.invoke('some/query', 'DELETE', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
+                    expect((actual as any).agent).toBeUndefined();
                     expect(actual.method).toBe('DELETE');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
@@ -226,6 +231,7 @@ describe('BaseClient', () => {
                 client.invoke('some/query', 'POST', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
+                    expect((actual as any).agent).toBeUndefined();
                     expect(actual.method).toBe('POST');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
@@ -240,11 +246,26 @@ describe('BaseClient', () => {
                 client.invoke('some/query', 'PUT', {some: 'body'});
 
                 assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
+                    expect((actual as any).agent).toBeUndefined();
                     expect(actual.method).toBe('PUT');
                     expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
                     expect(actual.headers.get('Cookie')).toBe('apimockid=123');
                     expect(actual.headers.get('Content-Type')).toBe('application/json');
                     return expect(await actual.text()).toBe('{"some":"body"}');
+                }));
+            });
+        });
+
+        describe('adds the agent when https', () => {
+            beforeEach(()=> {
+                client.baseUrl = 'https://localhost:9000';
+
+                client.invoke('some/query', 'GET', {some: 'body'});
+            });
+
+            it('adds the agent to the request options', () => {
+                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
+                    expect((actual as any).agent).toBeDefined();
                 }));
             });
         });
