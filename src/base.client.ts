@@ -1,7 +1,7 @@
 import fetch, {Request} from 'node-fetch';
 import * as uuid from 'uuid';
 import {Client} from './client';
-import * as https from "https";
+import * as https from 'https';
 import urljoin = require('url-join');
 
 const COOKIE_NAME = 'apimockid';
