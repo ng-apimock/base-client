@@ -1,5 +1,6 @@
-import {assert, match, SinonStub, stub} from 'sinon';
-import {BaseClient} from './base.client';
+import { HttpMethods } from '../../core/src/core/middleware/http';
+
+import { BaseClient } from './base.client';
 
 class TestClient extends BaseClient {
     openUrl(url: string): Promise<any> {
@@ -13,394 +14,346 @@ class TestClient extends BaseClient {
 
 describe('BaseClient', () => {
     let client: BaseClient;
-    let openUrlFn: SinonStub;
-    let setCookieFn: SinonStub;
-    let stubs: SinonStub[];
+    let openUrlFn: jest.SpyInstance;
+    let setCookieFn: jest.SpyInstance;
 
     beforeEach(() => {
-        stubs = [
-            openUrlFn = stub(TestClient.prototype, 'openUrl'),
-            setCookieFn = stub(TestClient.prototype, 'setCookie')
-        ];
-
         client = new TestClient('http://localhost:9000');
         client.ngApimockId = '123';
+
+        openUrlFn = jest.spyOn(client, 'openUrl');
+        setCookieFn = jest.spyOn(client, 'setCookie');
     });
 
-    afterEach(() => stubs.forEach((stub) => stub.restore()));
-
     describe('constructor', () => {
-        it('sets the apimock id', () =>
-            expect(client.ngApimockId).toBeDefined());
+        it('sets the apimock id', () => expect(client.ngApimockId).toBeDefined());
 
-        it('sets the baseUrl', () =>
-            expect(client.baseUrl).toBe('http://localhost:9000' + '/ngapimock'));
+        it('sets the baseUrl', () => expect(client.baseUrl).toBe('http://localhost:9000/ngapimock'));
 
-        it('sets the https agent', () =>
-            expect((client as any).agent).toBeDefined());
+        it('sets the https agent', () => expect((client as any).agent).toBeDefined());
     });
 
     describe('delayResponse', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.delayResponse('name', 1000);
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('delays the mock response', () =>
-            assert.calledWith(invokeFn, 'mocks', 'PUT', {name: 'name', delay: 1000}));
+        it('delays the mock response', () => expect(invokeFn).toHaveBeenCalledWith('mocks', 'PUT', {
+            name: 'name',
+            delay: 1000
+        }));
     });
 
     describe('deleteVariable', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.deleteVariable('one');
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('deletes the variable', () =>
-            assert.calledWith(invokeFn, 'variables/one', 'DELETE', {}));
+        it('deletes the variable', () => expect(invokeFn).toHaveBeenCalledWith('variables/one', 'DELETE', {}));
     });
 
     describe('echoRequest', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.echoRequest('name', true);
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('enables the mock request echo', () =>
-            assert.calledWith(invokeFn, 'mocks', 'PUT', {name: 'name', echo: true}));
+        it('enables the mock request echo', () => expect(invokeFn).toHaveBeenCalledWith('mocks', 'PUT', {
+            name: 'name',
+            echo: true
+        }));
     });
 
     describe('getMocks', () => {
-        let invokeFn: SinonStub;
-        let invokeResponseJsonFn: SinonStub;
+        let invokeFn: jest.Mock;
+        let invokeResponseJsonFn: jest.Mock;
 
         beforeEach(async () => {
-            invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke');
-            invokeFn.resolves({json: invokeResponseJsonFn});
+            invokeFn = client.invoke = jest.fn();
+            invokeResponseJsonFn = jest.fn();
+            invokeFn.mockResolvedValue({ json: invokeResponseJsonFn });
 
             await client.getMocks();
         });
 
-        afterEach(() => invokeFn.restore());
-
         it('gets the mocks', () => {
-            assert.calledWith(invokeFn, 'mocks', 'GET', {});
-            assert.called(invokeResponseJsonFn);
+            expect(invokeFn).toHaveBeenCalledWith('mocks', 'GET', {});
+            expect(invokeResponseJsonFn).toHaveBeenCalled();
         });
     });
 
     describe('getPresets', () => {
-        let invokeFn: SinonStub;
-        let invokeResponseJsonFn: SinonStub;
+        let invokeFn: jest.Mock;
+        let invokeResponseJsonFn: jest.Mock;
 
         beforeEach(async () => {
-            invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke');
-            invokeFn.resolves({json: invokeResponseJsonFn});
+            invokeFn = client.invoke = jest.fn();
+            invokeResponseJsonFn = jest.fn();
+            invokeFn.mockResolvedValue({ json: invokeResponseJsonFn });
 
             await client.getPresets();
         });
 
-        afterEach(() => invokeFn.restore());
-
         it('gets the presets', () => {
-            assert.calledWith(invokeFn, 'presets', 'GET', {});
-            assert.called(invokeResponseJsonFn);
+            expect(invokeFn).toHaveBeenCalledWith('presets', 'GET', {});
+            expect(invokeResponseJsonFn).toHaveBeenCalled();
         });
     });
 
     describe('getRecordings', () => {
-        let invokeFn: SinonStub;
-        let invokeResponseJsonFn: SinonStub;
+        let invokeFn: jest.Mock;
+        let invokeResponseJsonFn: jest.Mock;
 
         beforeEach(async () => {
-            invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke');
-            invokeFn.resolves({json: invokeResponseJsonFn});
+            invokeFn = client.invoke = jest.fn();
+            invokeResponseJsonFn = jest.fn();
+            invokeFn.mockResolvedValue({ json: invokeResponseJsonFn });
 
             await client.getRecordings();
         });
 
-        afterEach(() => invokeFn.restore());
-
         it('gets the recordings', () => {
-            assert.calledWith(invokeFn, 'recordings', 'GET', {});
-            assert.called(invokeResponseJsonFn);
+            expect(invokeFn).toHaveBeenCalledWith('recordings', 'GET', {});
+            expect(invokeResponseJsonFn).toHaveBeenCalled();
         });
     });
 
     describe('getVariables', () => {
-        let invokeFn: SinonStub;
-        let invokeResponseJsonFn: SinonStub;
+        let invokeFn: jest.Mock;
+        let invokeResponseJsonFn: jest.Mock;
 
         beforeEach(async () => {
-            invokeResponseJsonFn = stub();
-            invokeFn = stub(BaseClient.prototype, 'invoke');
-            invokeFn.resolves({json: invokeResponseJsonFn});
+            invokeFn = client.invoke = jest.fn();
+            invokeResponseJsonFn = jest.fn();
+            invokeFn.mockResolvedValue({ json: invokeResponseJsonFn });
 
             await client.getVariables();
         });
 
-        afterEach(() => invokeFn.restore());
-
         it('gets the variables', () => {
-            assert.calledWith(invokeFn, 'variables', 'GET', {});
-            assert.called(invokeResponseJsonFn);
+            expect(invokeFn).toHaveBeenCalledWith('variables', 'GET', {});
+            expect(invokeResponseJsonFn).toHaveBeenCalled();
         });
     });
 
     describe('invoke', () => {
-        let fetchResponseFn: SinonStub;
+        let fetchResponseFn: jest.SpyInstance;
 
         beforeEach(() => {
-            fetchResponseFn = stub(BaseClient.prototype, 'fetchResponse');
+            fetchResponseFn = jest.spyOn(client, 'fetchResponse');
 
-            fetchResponseFn.resolves(({ok: true, status: 200}));
+            fetchResponseFn.mockResolvedValue(({ ok: true, status: 200 }));
         });
-
-        afterEach(() => fetchResponseFn.restore());
 
         describe('throws an error when fetch returns non 200', () => {
             beforeEach(() => {
-                fetchResponseFn.resolves(({ok: false, status: 404}));
+                fetchResponseFn.mockResolvedValue(({ ok: false, status: 404 }));
             });
 
             it('calls the api without body', async () => {
-                try {
-                    await client.invoke('some/query', 'GET', {some: 'body'});
-                    fail();
-                } catch (error) {
-                    expect(error.message).toBe('An error occured while invoking http://localhost:9000/ngapimock/some/query that resulted in status code 404');
-                }
+                await expect(client.invoke('some/query', 'GET', { some: 'body' })).rejects
+                    .toThrow(expect.objectContaining({
+                        message: 'An error occured while invoking http://localhost:9000/ngapimock/some/query that resulted in status code 404'
+                    }));
             });
         });
 
         describe('method is GET', () => {
-            it('calls the api without body', (done) => {
-                client.invoke('some/query', 'GET', {some: 'body'});
+            it('calls the api without body', (async () => {
+                client.invoke('some/query', 'GET', { some: 'body' });
 
-                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
-                    expect((actual as any).agent).toBeUndefined();
-                    expect(actual.method).toBe('GET');
-                    expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
-                    expect(actual.headers.get('Cookie')).toBe('apimockid=123');
-                    expect(actual.headers.get('Content-Type')).toBe('application/json');
-                    expect(await actual.text()).toBe('');
-                    done();
-                }));
-            });
+                expect(fetchResponseFn).toHaveBeenCalled();
+
+                const actualRequest = fetchResponseFn.mock.calls[0][0];
+                expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
+                expect(actualRequest.method).toBe(HttpMethods.GET);
+                expect((actualRequest as any).agent).toBeUndefined();
+                expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
+                expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
+                expect(await actualRequest.text()).toBe('');
+            }));
         });
 
-        describe('method is DELETE', () => {
-            it('calls the api without body', (done) => {
-                client.invoke('some/query', 'DELETE', {some: 'body'});
+        describe('method is HEAD', () => {
+            it('calls the api without body', (async () => {
+                client.invoke('some/query', 'HEAD', { some: 'body' });
 
-                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
-                    expect((actual as any).agent).toBeUndefined();
-                    expect(actual.method).toBe('DELETE');
-                    expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
-                    expect(actual.headers.get('Cookie')).toBe('apimockid=123');
-                    expect(actual.headers.get('Content-Type')).toBe('application/json');
-                    expect(await actual.text()).toBe('');
-                    done();
-                }));
-            });
+                expect(fetchResponseFn).toHaveBeenCalled();
+
+                const actualRequest = fetchResponseFn.mock.calls[0][0];
+                expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
+                expect(actualRequest.method).toBe(HttpMethods.HEAD);
+                expect((actualRequest as any).agent).toBeUndefined();
+                expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
+                expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
+                expect(await actualRequest.text()).toBe('');
+            }));
         });
 
         describe('method is POST', () => {
-            it('calls the api without body', (done) => {
-                client.invoke('some/query', 'POST', {some: 'body'});
+            it('calls the api with body', (async () => {
+                client.invoke('some/query', 'POST', { some: 'body' });
 
-                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
-                    expect((actual as any).agent).toBeUndefined();
-                    expect(actual.method).toBe('POST');
-                    expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
-                    expect(actual.headers.get('Cookie')).toBe('apimockid=123');
-                    expect(actual.headers.get('Content-Type')).toBe('application/json');
-                    expect(await actual.text()).toBe('{"some":"body"}');
-                    done();
-                }));
-            });
+                expect(fetchResponseFn).toHaveBeenCalled();
+
+                const actualRequest = fetchResponseFn.mock.calls[0][0];
+                expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
+                expect(actualRequest.method).toBe(HttpMethods.POST);
+                expect((actualRequest as any).agent).toBeUndefined();
+                expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
+                expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
+                expect(await actualRequest.text()).toBe('{"some":"body"}');
+            }));
         });
 
         describe('method is PUT', () => {
-            it('calls the api without body', (done) => {
-                client.invoke('some/query', 'PUT', {some: 'body'});
+            it('calls the api without body', (async () => {
+                client.invoke('some/query', 'PUT', { some: 'body' });
 
-                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
-                    expect((actual as any).agent).toBeUndefined();
-                    expect(actual.method).toBe('PUT');
-                    expect(actual.url).toBe('http://localhost:9000/ngapimock/some/query');
-                    expect(actual.headers.get('Cookie')).toBe('apimockid=123');
-                    expect(actual.headers.get('Content-Type')).toBe('application/json');
-                    expect(await actual.text()).toBe('{"some":"body"}');
-                    done();
-                }));
-            });
+                expect(fetchResponseFn).toHaveBeenCalled();
+
+                const actualRequest = fetchResponseFn.mock.calls[0][0];
+                expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
+                expect(actualRequest.method).toBe(HttpMethods.PUT);
+                expect((actualRequest as any).agent).toBeUndefined();
+                expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
+                expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
+                expect(await actualRequest.text()).toBe('{"some":"body"}');
+            }));
         });
 
         describe('adds the agent when https', () => {
             beforeEach(() => {
                 client.baseUrl = 'https://localhost:9000';
 
-                client.invoke('some/query', 'GET', {some: 'body'});
+                client.invoke('some/query', 'GET', { some: 'body' });
             });
 
-            it('adds the agent to the request options', (done) => {
-                assert.calledWith(fetchResponseFn, match(async (actual: Request) => {
-                    expect((actual as any).agent).toBeDefined();
-                    done();
-                }));
-            });
+            it('adds the agent to the request options', (async () => {
+                expect(fetchResponseFn).toHaveBeenCalled();
+
+                const actualRequest = fetchResponseFn.mock.calls[0][0];
+                expect((actualRequest as any).agent).toBeDefined();
+            }));
         });
     });
 
-
     describe('recordRequests', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.recordRequests(true);
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('enables the recording the requests', () =>
-            assert.calledWith(invokeFn, 'actions', 'PUT', {action: 'record', record: true}));
+        it('enables the recording the requests', () => expect(invokeFn).toHaveBeenCalledWith('actions', 'PUT', {
+            action: 'record',
+            record: true
+        }));
     });
 
     describe('resetMocksToDefault', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.resetMocksToDefault();
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('resets the mocks to defaults', () =>
-            assert.calledWith(invokeFn, 'actions', 'PUT', {action: 'defaults'}));
+        it('resets the mocks to defaults', () => expect(invokeFn).toHaveBeenCalledWith('actions', 'PUT', { action: 'defaults' }));
     });
 
     describe('selectPreset', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.selectPreset('preset name');
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('selects the preset', () =>
-            assert.calledWith(invokeFn, 'presets', 'PUT', {name: 'preset name'}));
+        it('selects the preset', () => expect(invokeFn).toHaveBeenCalledWith('presets', 'PUT', { name: 'preset name' }));
     });
 
     describe('selectScenario', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.selectScenario('name', 'scenario');
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('selects the mock scenario', () =>
-            assert.calledWith(invokeFn, 'mocks', 'PUT', {name: 'name', scenario: 'scenario'}));
+        it('selects the mock scenario', () => expect(invokeFn).toHaveBeenCalledWith('mocks', 'PUT', {
+            name: 'name',
+            scenario: 'scenario'
+        }));
     });
 
     describe('setMocksToPassThrough', () => {
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
             client.setMocksToPassThrough();
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('sets mocks to passThrough', () =>
-            assert.calledWith(invokeFn, 'actions', 'PUT', {action: 'passThroughs'}));
+        it('sets mocks to passThrough', () => expect(invokeFn).toHaveBeenCalledWith('actions', 'PUT', { action: 'passThroughs' }));
     });
 
     describe('setNgApimockCookie', () => {
-
         beforeEach(async () => {
-            openUrlFn.resolves();
-            setCookieFn.resolves();
+            openUrlFn.mockImplementation(() => {
+            });
+            setCookieFn.mockImplementation(() => {
+            });
 
             await client.setNgApimockCookie();
         });
 
-        afterEach(() => {
-            openUrlFn.reset();
-            setCookieFn.reset();
-        });
+        it('opens the init url', () => expect(openUrlFn).toHaveBeenCalledWith('http://localhost:9000/ngapimock/init'));
 
-        it('opens the init url', () => {
-            assert.calledWith(openUrlFn, `${'http://localhost:9000'}/ngapimock/init`);
-        });
-
-        it('sets the cookie', () => {
-            assert.calledWith(setCookieFn, 'apimockid', client.ngApimockId);
-        });
+        it('sets the cookie', () => expect(setCookieFn).toHaveBeenCalledWith('apimockid', client.ngApimockId));
     });
 
-
     describe('setVariable', () => {
-        let setVariablesFn: SinonStub;
+        let setVariablesFn: jest.Mock;
 
         beforeEach(() => {
-            setVariablesFn = stub(BaseClient.prototype, 'setVariables');
+            setVariablesFn = client.setVariables = jest.fn();
 
             client.setVariable('one', 'first');
         });
 
-        afterEach(() => {
-            setVariablesFn.restore();
-        });
-
-        it('sets the variable', () =>
-            assert.calledWith(setVariablesFn, {one: 'first'}));
+        it('sets the variable', () => expect(setVariablesFn).toHaveBeenCalledWith({ one: 'first' }));
     });
 
     describe('setVariables', () => {
-        let variables: { [key: string]: string };
-        let invokeFn: SinonStub;
+        let invokeFn: jest.Mock;
 
         beforeEach(() => {
-            invokeFn = stub(BaseClient.prototype, 'invoke');
+            invokeFn = client.invoke = jest.fn();
 
-            client.setVariables({'one': 'first', 'enabled': true});
+            client.setVariables({ one: 'first', enabled: true });
         });
 
-        afterEach(() => invokeFn.restore());
-
-        it('sets the variables', () =>
-            assert.calledWith(invokeFn, 'variables', 'PUT', {'one': 'first', 'enabled': true}));
+        it('sets the variables', () => expect(invokeFn).toHaveBeenCalledWith('variables', 'PUT', {
+            one: 'first',
+            enabled: true
+        }));
     });
 });
