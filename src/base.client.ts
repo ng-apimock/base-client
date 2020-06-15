@@ -1,13 +1,14 @@
-import fetch, {Request} from 'node-fetch';
-import * as uuid from 'uuid';
-import {Client} from './client';
 import * as https from 'https';
+
+import fetch, { Request } from 'node-fetch';
 import urljoin = require('url-join');
+import * as uuid from 'uuid';
+
+import { Client } from './client';
 
 const COOKIE_NAME = 'apimockid';
 
-
-/** Base client that takes care of the actual invoking of the ng-apimock api.*/
+/** Base client that takes care of the actual invoking of the ng-apimock api. */
 abstract class BaseClient implements Client {
     public ngApimockId: string;
     public baseUrl: string;
@@ -33,7 +34,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async delayResponse(name: string, delay: number): Promise<any> {
-        return await this.invoke('mocks', 'PUT', {name: name, delay: delay});
+        return await this.invoke('mocks', 'PUT', { name, delay });
     }
 
     /**
@@ -52,7 +53,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async echoRequest(name: string, echo: boolean): Promise<any> {
-        return await this.invoke('mocks', 'PUT', {name: name, echo: echo});
+        return await this.invoke('mocks', 'PUT', { name, echo });
     }
 
     /**
@@ -108,14 +109,14 @@ abstract class BaseClient implements Client {
      */
     async invoke(query: string, method: string, body: any): Promise<any> {
         const requestInit: any = {
-            method: method,
+            method,
             headers: {
-                'Cookie': `${COOKIE_NAME}=${this.ngApimockId}`,
+                Cookie: `${COOKIE_NAME}=${this.ngApimockId}`,
                 'Content-Type': 'application/json'
             }
         };
 
-        if (['GET', 'DELETE'].indexOf(method) === -1) {
+        if (['GET', 'HEAD'].indexOf(method) === -1) {
             requestInit.body = JSON.stringify(body);
         }
 
@@ -128,9 +129,8 @@ abstract class BaseClient implements Client {
             .then((response: Response) => {
                 if (response.ok) {
                     return response;
-                } else {
-                    throw new Error(`An error occured while invoking ${url} that resulted in status code ${response.status}`);
                 }
+                throw new Error(`An error occured while invoking ${url} that resulted in status code ${response.status}`);
             });
     }
 
@@ -147,7 +147,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async recordRequests(record: boolean): Promise<any> {
-        return await this.invoke('actions', 'PUT', {action: 'record', record: record});
+        return await this.invoke('actions', 'PUT', { action: 'record', record });
     }
 
     /**
@@ -155,7 +155,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async resetMocksToDefault(): Promise<any> {
-        await this.invoke('actions', 'PUT', {action: 'defaults'});
+        await this.invoke('actions', 'PUT', { action: 'defaults' });
     }
 
     /**
@@ -164,7 +164,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async selectPreset(name: string): Promise<any> {
-        return await this.invoke('presets', 'PUT', {name: name});
+        return await this.invoke('presets', 'PUT', { name });
     }
 
     /**
@@ -174,7 +174,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async selectScenario(name: string, scenario: string): Promise<any> {
-        return await this.invoke('mocks', 'PUT', {name: name, scenario: scenario});
+        return await this.invoke('mocks', 'PUT', { name, scenario });
     }
 
     /**
@@ -190,7 +190,7 @@ abstract class BaseClient implements Client {
      * @return {Promise} promise The promise.
      */
     async setMocksToPassThrough(): Promise<any> {
-        return await this.invoke('actions', 'PUT', {action: 'passThroughs'});
+        return await this.invoke('actions', 'PUT', { action: 'passThroughs' });
     }
 
     /**
@@ -225,4 +225,4 @@ abstract class BaseClient implements Client {
     }
 }
 
-export {BaseClient, Client};
+export { BaseClient, Client };
