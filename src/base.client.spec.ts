@@ -1,5 +1,3 @@
-import { HttpMethods } from '../../core/src/core/middleware/http';
-
 import { BaseClient } from './base.client';
 
 class TestClient extends BaseClient {
@@ -177,7 +175,7 @@ describe('BaseClient', () => {
 
                 const actualRequest = fetchResponseFn.mock.calls[0][0];
                 expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
-                expect(actualRequest.method).toBe(HttpMethods.GET);
+                expect(actualRequest.method).toBe('GET');
                 expect((actualRequest as any).agent).toBeUndefined();
                 expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
                 expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
@@ -193,7 +191,7 @@ describe('BaseClient', () => {
 
                 const actualRequest = fetchResponseFn.mock.calls[0][0];
                 expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
-                expect(actualRequest.method).toBe(HttpMethods.HEAD);
+                expect(actualRequest.method).toBe('HEAD');
                 expect((actualRequest as any).agent).toBeUndefined();
                 expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
                 expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
@@ -209,7 +207,7 @@ describe('BaseClient', () => {
 
                 const actualRequest = fetchResponseFn.mock.calls[0][0];
                 expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
-                expect(actualRequest.method).toBe(HttpMethods.POST);
+                expect(actualRequest.method).toBe('POST');
                 expect((actualRequest as any).agent).toBeUndefined();
                 expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
                 expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
@@ -225,7 +223,7 @@ describe('BaseClient', () => {
 
                 const actualRequest = fetchResponseFn.mock.calls[0][0];
                 expect(actualRequest.url).toBe('http://localhost:9000/ngapimock/some/query');
-                expect(actualRequest.method).toBe(HttpMethods.PUT);
+                expect(actualRequest.method).toBe('PUT');
                 expect((actualRequest as any).agent).toBeUndefined();
                 expect(actualRequest.headers.get('Cookie')).toBe('apimockid=123');
                 expect(actualRequest.headers.get('Content-Type')).toBe('application/json');
