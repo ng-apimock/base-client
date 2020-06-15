@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file. See
 ## [1.0.16](https://github.com/ng-apimock/base-client/compare/v1.0.15...v1.0.16) (2020-06-15)
 
 
-### Bug Fixes
+### Chore
+* 🤖 update project repo  ([b4c026a](https://github.com/ng-apimock/base-client/commit/b4c026a970a31cbc257a6ca2a2e4eab7e7a6a0a9))
+* 🎡 migrate to github-actions ([5d207f5](https://github.com/ng-apimock/base-client/commit/5d207f5b177451c02829d7a30199795f7c697914))
 
-* 🐛 remove incorrect import ([eba751d](https://github.com/ng-apimock/base-client/commit/eba751d36752d88bd5e996736db90e77501dc8c4))
+## [1.0.15](https://github.com/ng-apimock/base-client/compare/v1.0.14...v1.0.15) (2020-03-03)
+
+### Feature
+* add https support ([3eeab5](https://github.com/ng-apimock/base-client/commit/3eeab54bbe8eb680c56f2a2751916129af57e55d))
