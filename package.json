@@ -1,7 +1,7 @@
 {
     "name": "@ng-apimock/base-client",
     "description": "Base client for @ng-apimock/core",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "homepage": "https://github.com/ng-apimock/base-client#readme",
     "author": {
         "name": "Mischa Dasberg",
