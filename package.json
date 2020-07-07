@@ -40,7 +40,7 @@
         "@semantic-release/github": "7.0.7",
         "@semantic-release/npm": "7.0.5",
         "@semantic-release/release-notes-generator": "9.0.1",
-        "@types/jest": "26.0.3",
+        "@types/jest": "26.0.4",
         "@types/node-fetch": "2.5.7",
         "@types/url-join": "4.0.0",
         "@types/uuid": "8.0.0",
