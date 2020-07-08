@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/ng-apimock/base-client/compare/v2.0.0...v2.0.1) (2020-07-08)
+
+
+### Bug Fixes
+
+* 🐛 export default configuration ([43c2a46](https://github.com/ng-apimock/base-client/commit/43c2a46368355b7875602063f91f17aa17aba56a))
+
 # [2.0.0](https://github.com/ng-apimock/base-client/compare/v1.0.16...v2.0.0) (2020-07-08)
 
 
