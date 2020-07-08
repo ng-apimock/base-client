@@ -230,4 +230,6 @@ abstract class BaseClient implements Client {
     }
 }
 
-export { BaseClient, Client, Configuration, DefaultConfiguration };
+export {
+    BaseClient, Client, Configuration, DefaultConfiguration
+};
