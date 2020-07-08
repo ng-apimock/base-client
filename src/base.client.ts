@@ -5,22 +5,27 @@ import urljoin = require('url-join');
 import * as uuid from 'uuid';
 
 import { Client } from './client';
-
-const COOKIE_NAME = 'apimockid';
+import { Configuration, DefaultConfiguration } from './configuration';
 
 /** Base client that takes care of the actual invoking of the ng-apimock api. */
 abstract class BaseClient implements Client {
     public ngApimockId: string;
     public baseUrl: string;
     private agent: https.Agent;
+    private configuration: Configuration;
 
     /**
      * Constructor.
-     * @param {string} baseUrl The base url.
+     * @param {Configuration} configuration The configuration.
      */
-    constructor(baseUrl: string) {
+    constructor(configuration: Configuration) {
         this.ngApimockId = uuid.v4();
-        this.baseUrl = urljoin(baseUrl, 'ngapimock');
+        this.configuration = {
+            ...DefaultConfiguration,
+            ...JSON.parse(JSON.stringify(configuration)) // removed undefined values
+        };
+
+        this.baseUrl = urljoin(this.configuration.baseUrl, this.configuration.basePath);
 
         this.agent = new https.Agent({
             rejectUnauthorized: false
@@ -111,7 +116,7 @@ abstract class BaseClient implements Client {
         const requestInit: any = {
             method,
             headers: {
-                Cookie: `${COOKIE_NAME}=${this.ngApimockId}`,
+                Cookie: `${this.configuration.identifier}=${this.ngApimockId}`,
                 'Content-Type': 'application/json'
             }
         };
@@ -199,7 +204,7 @@ abstract class BaseClient implements Client {
      */
     async setNgApimockCookie(): Promise<any> {
         await this.openUrl(urljoin(this.baseUrl, 'init'));
-        await this.setCookie(COOKIE_NAME, this.ngApimockId);
+        await this.setCookie(this.configuration.identifier, this.ngApimockId);
         return this;
     }
 
@@ -225,4 +230,4 @@ abstract class BaseClient implements Client {
     }
 }
 
-export { BaseClient, Client };
+export { BaseClient, Client, Configuration };

@@ -16,7 +16,7 @@ describe('BaseClient', () => {
     let setCookieFn: jest.SpyInstance;
 
     beforeEach(() => {
-        client = new TestClient('http://localhost:9000');
+        client = new TestClient({ baseUrl: 'http://localhost:9000' });
         client.ngApimockId = '123';
 
         openUrlFn = jest.spyOn(client, 'openUrl');
@@ -24,11 +24,46 @@ describe('BaseClient', () => {
     });
 
     describe('constructor', () => {
-        it('sets the apimock id', () => expect(client.ngApimockId).toBeDefined());
+        describe('defaults', () => {
+            beforeEach(() => {
+                client = new TestClient({
+                    baseUrl: 'http://localhost:9000',
+                    basePath: undefined
+                });
+                client.ngApimockId = '123';
 
-        it('sets the baseUrl', () => expect(client.baseUrl).toBe('http://localhost:9000/ngapimock'));
+                openUrlFn = jest.spyOn(client, 'openUrl');
+                setCookieFn = jest.spyOn(client, 'setCookie');
+            });
 
-        it('sets the https agent', () => expect((client as any).agent).toBeDefined());
+            it('sets the apimock id', () => expect(client.ngApimockId).toBeDefined());
+
+            it('sets the baseUrl', () => expect(client.baseUrl).toBe('http://localhost:9000/ngapimock'));
+
+            it('sets the basePath', () => expect(client.baseUrl).toBe('http://localhost:9000/ngapimock'));
+
+            it('sets the https agent', () => expect((client as any).agent).toBeDefined());
+        });
+
+        describe('overrides', () => {
+            beforeEach(() => {
+                client = new TestClient({
+                    baseUrl: 'http://localhost:9000',
+                    basePath: 'myapimock'
+                });
+                client.ngApimockId = '123';
+
+                openUrlFn = jest.spyOn(client, 'openUrl');
+                setCookieFn = jest.spyOn(client, 'setCookie');
+            });
+            it('sets the apimock id', () => expect(client.ngApimockId).toBeDefined());
+
+            it('sets the baseUrl', () => expect(client.baseUrl).toBe('http://localhost:9000/myapimock'));
+
+            it('sets the basePath', () => expect(client.baseUrl).toBe('http://localhost:9000/myapimock'));
+
+            it('sets the https agent', () => expect((client as any).agent).toBeDefined());
+        });
     });
 
     describe('delayResponse', () => {
@@ -314,18 +349,40 @@ describe('BaseClient', () => {
     });
 
     describe('setNgApimockCookie', () => {
-        beforeEach(async () => {
-            openUrlFn.mockImplementation(() => {
-            });
-            setCookieFn.mockImplementation(() => {
+        describe('defaults', () => {
+            beforeEach(async () => {
+                openUrlFn.mockImplementation(() => {
+                });
+                setCookieFn.mockImplementation(() => {
+                });
+
+                await client.setNgApimockCookie();
             });
 
-            await client.setNgApimockCookie();
+            it('opens the init url', () => expect(openUrlFn).toHaveBeenCalledWith('http://localhost:9000/ngapimock/init'));
+
+            it('sets the cookie', () => expect(setCookieFn).toHaveBeenCalledWith('apimockid', client.ngApimockId));
         });
 
-        it('opens the init url', () => expect(openUrlFn).toHaveBeenCalledWith('http://localhost:9000/ngapimock/init'));
+        describe('override', () => {
+            beforeEach(async () => {
+                client = new TestClient({ baseUrl: 'http://localhost:9000', basePath: 'myapimock', identifier: 'awesomemock' });
+                client.ngApimockId = '123';
 
-        it('sets the cookie', () => expect(setCookieFn).toHaveBeenCalledWith('apimockid', client.ngApimockId));
+                openUrlFn = jest.spyOn(client, 'openUrl');
+                setCookieFn = jest.spyOn(client, 'setCookie');
+                openUrlFn.mockImplementation(() => {
+                });
+                setCookieFn.mockImplementation(() => {
+                });
+
+                await client.setNgApimockCookie();
+            });
+
+            it('opens the init url', () => expect(openUrlFn).toHaveBeenCalledWith('http://localhost:9000/myapimock/init'));
+
+            it('sets the cookie', () => expect(setCookieFn).toHaveBeenCalledWith('awesomemock', client.ngApimockId));
+        });
     });
 
     describe('setVariable', () => {
