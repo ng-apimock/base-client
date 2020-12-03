@@ -144,7 +144,7 @@ abstract class BaseClient implements Client {
      * @param {string} url The url.
      * @return {Promise} promise The promise.
      */
-    abstract async openUrl(url: string): Promise<any>;
+    abstract openUrl(url: string): Promise<any>;
 
     /**
      * Record the requests.
@@ -188,7 +188,7 @@ abstract class BaseClient implements Client {
      * @param {string} value The cookie value.
      * @return {Promise} promise The promise.
      */
-    abstract async setCookie(name: string, value: string): Promise<any>;
+    abstract setCookie(name: string, value: string): Promise<any>;
 
     /**
      * Sets for all the mocks the selected scenario to the passThrough.
