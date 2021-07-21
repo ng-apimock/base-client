@@ -42,7 +42,7 @@
         "@semantic-release/npm": "7.1.1",
         "@semantic-release/release-notes-generator": "9.0.2",
         "@types/jest": "26.0.22",
-        "@types/node-fetch": "2.5.10",
+        "@types/node-fetch": "2.5.11",
         "@types/url-join": "4.0.0",
         "@types/uuid": "8.3.0",
         "@typescript-eslint/eslint-plugin": "4.22.0",
