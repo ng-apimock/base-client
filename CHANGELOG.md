@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/ng-apimock/base-client/compare/v2.0.2...v3.0.0) (2021-07-21)
+
+
+### chore
+
+* 🤖 drop support for Nodejs v10 because EOL ended ([5d6d014](https://github.com/ng-apimock/base-client/commit/5d6d014783ead658fc5fa1cc69829eb6d812d73a))
+
+
+### BREAKING CHANGES
+
+* 🧨 NodeJs v10 dropped
+
 ## [2.0.2](https://github.com/ng-apimock/base-client/compare/v2.0.1...v2.0.2) (2020-12-03)
 
 
