@@ -94,4 +94,14 @@ export interface Client {
      * @return {promise} promise The promise.
      */
     setVariables(variables: { [key: string]: any }): Promise<any>;
+
+    /**
+     * Creates a preset.
+     * @param name The name of the preset.
+     * @param {boolean} includeMocks Includes the mocks.
+     * @param {boolean} includeVariables Includes the variable.
+     * @return {promise} promise The promise.
+     */
+    createPreset(name: string, includeMocks: boolean, includeVariables: boolean): Promise<any>;
+
 }

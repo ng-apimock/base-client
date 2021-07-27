@@ -366,7 +366,11 @@ describe('BaseClient', () => {
 
         describe('override', () => {
             beforeEach(async () => {
-                client = new TestClient({ baseUrl: 'http://localhost:9000', basePath: 'myapimock', identifier: 'awesomemock' });
+                client = new TestClient({
+                    baseUrl: 'http://localhost:9000',
+                    basePath: 'myapimock',
+                    identifier: 'awesomemock'
+                });
                 client.ngApimockId = '123';
 
                 openUrlFn = jest.spyOn(client, 'openUrl');
@@ -410,5 +414,50 @@ describe('BaseClient', () => {
             one: 'first',
             enabled: true
         }));
+    });
+
+    describe('createPreset', () => {
+        let invokeFn: jest.Mock;
+        let getMocksFn: jest.Mock;
+        let getVariablesFn: jest.Mock;
+
+        beforeEach(() => {
+            invokeFn = client.invoke = jest.fn();
+            getMocksFn = client.getMocks = jest.fn();
+            getVariablesFn = client.getVariables = jest.fn();
+
+            getMocksFn.mockResolvedValue({ state: { name: 'my-mock' } });
+            getVariablesFn.mockResolvedValue({ state: { name: 'my-variable' } });
+        });
+
+        it('persists the preset with mocks and variables', async () => {
+            await client.createPreset('my-preset', true, true);
+
+            expect(invokeFn).toHaveBeenCalledWith('presets', 'POST', {
+                name: 'my-preset',
+                mocks: { name: 'my-mock' },
+                variables: { name: 'my-variable' }
+            });
+        });
+
+        it('persists the preset with mocks and without variables', async () => {
+            await client.createPreset('my-preset', true, false);
+
+            expect(invokeFn).toHaveBeenCalledWith('presets', 'POST', {
+                name: 'my-preset',
+                mocks: { name: 'my-mock' },
+                variables: { }
+            });
+        });
+
+        it('persists the preset with out mocks and with variables', async () => {
+            await client.createPreset('my-preset', false, true);
+
+            expect(invokeFn).toHaveBeenCalledWith('presets', 'POST', {
+                name: 'my-preset',
+                mocks: { },
+                variables: { name: 'my-variable' }
+            });
+        });
     });
 });
