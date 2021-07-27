@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/ng-apimock/base-client/compare/v3.0.0...v3.1.0) (2021-07-27)
+
+
+### Features
+
+* 🎸 add create-preset to client ([7f32a42](https://github.com/ng-apimock/base-client/commit/7f32a42b9392f325b2bdf6a7974e81b8c084e8d4)), closes [#345](https://github.com/ng-apimock/base-client/issues/345) [#344](https://github.com/ng-apimock/base-client/issues/344) [#343](https://github.com/ng-apimock/base-client/issues/343) [#342](https://github.com/ng-apimock/base-client/issues/342) [#341](https://github.com/ng-apimock/base-client/issues/341) [#339](https://github.com/ng-apimock/base-client/issues/339) [#338](https://github.com/ng-apimock/base-client/issues/338)
+
 # [3.0.0](https://github.com/ng-apimock/base-client/compare/v2.0.2...v3.0.0) (2021-07-21)
 
 
