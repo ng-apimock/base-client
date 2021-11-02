@@ -33,6 +33,30 @@ abstract class BaseClient implements Client {
     }
 
     /**
+     * Creates a preset.
+     * @param name The name of the preset.
+     * @param {boolean} includeMocks Includes the mocks.
+     * @param {boolean} includeVariables Includes the variable.
+     * @return {promise} promise The promise.
+     */
+    async createPreset(name: string, includeMocks: boolean, includeVariables: boolean): Promise<any> {
+        const mocks = includeMocks
+            ? (await this.getMocks()).state
+            : {};
+        const variables = includeVariables
+            ? (await this.getVariables()).state
+            : {};
+
+        const payload = {
+            name,
+            mocks,
+            variables
+        } as any;
+
+        return await this.invoke('presets', 'POST', payload);
+    }
+
+    /**
      * Delay the mock response.
      * @param {string} name The mock name.
      * @param {number} delay The delay.
@@ -227,30 +251,6 @@ abstract class BaseClient implements Client {
      */
     async setVariables(variables: { [key: string]: any }): Promise<any> {
         return await this.invoke('variables', 'PUT', variables);
-    }
-
-    /**
-     * Creates a preset.
-     * @param name The name of the preset.
-     * @param {boolean} includeMocks Includes the mocks.
-     * @param {boolean} includeVariables Includes the variable.
-     * @return {promise} promise The promise.
-     */
-    async createPreset(name: string, includeMocks: boolean, includeVariables: boolean): Promise<any> {
-        const mocks = includeMocks
-            ? (await this.getMocks()).state
-            : {};
-        const variables = includeVariables
-            ? (await this.getVariables()).state
-            : {};
-
-        const payload = {
-            name,
-            mocks,
-            variables
-        } as any;
-
-        return await this.invoke('presets', 'POST', payload);
     }
 }
 
