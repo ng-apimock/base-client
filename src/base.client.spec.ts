@@ -66,7 +66,6 @@ describe('BaseClient', () => {
         });
     });
 
-
     describe('createPreset', () => {
         let invokeFn: jest.Mock;
         let getMocksFn: jest.Mock;
