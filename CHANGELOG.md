@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/ng-apimock/base-client/compare/v3.1.0...v3.2.0) (2022-05-16)
+
+
+### Features
+
+* feat: update node-fetch ([87cfa35](https://github.com/ng-apimock/base-client/commit/87cfa3508ae28acb72830fb191cc2c7dfa433c54)), closes [#561](https://github.com/ng-apimock/base-client/issues/561) [#560](https://github.com/ng-apimock/base-client/issues/560) [#559](https://github.com/ng-apimock/base-client/issues/559) [#558](https://github.com/ng-apimock/base-client/issues/558) [#557](https://github.com/ng-apimock/base-client/issues/557) [#556](https://github.com/ng-apimock/base-client/issues/556) [#553](https://github.com/ng-apimock/base-client/issues/553) [#549](https://github.com/ng-apimock/base-client/issues/549) [#547](https://github.com/ng-apimock/base-client/issues/547) [#529](https://github.com/ng-apimock/base-client/issues/529) [#529](https://github.com/ng-apimock/base-client/issues/529)
+
 # [3.1.0](https://github.com/ng-apimock/base-client/compare/v3.0.0...v3.1.0) (2021-07-27)
 
 
