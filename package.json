@@ -41,7 +41,7 @@
         "@semantic-release/github": "8.0.5",
         "@semantic-release/npm": "9.0.1",
         "@semantic-release/release-notes-generator": "10.0.3",
-        "@types/jest": "28.1.5",
+        "@types/jest": "28.1.8",
         "@types/node-fetch": "2.6.2",
         "@types/url-join": "4.0.1",
         "@types/uuid": "8.3.4",
